@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE NEIGHBORHOOD BOARD — a corkboard for everyday help</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cork: #b6884f;
+    --cork-dark: #8f6a3c;
+    --frame: #4a3524;
+    --ink: #2b2118;
+    --paper-cream: #fdf6e3;
+    --paper-sage: #d7e4c0;
+    --paper-sky: #cfe3f0;
+    --paper-blush: #f3d6d0;
+    --paper-grey: #dadad2;
+    --pin: #c0392b;
+    --pin-blue: #2d5f8a;
+    --twine: #8b5e3c;
+    --muted: #6b5a45;
+    --focus: #2d5f8a;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Work Sans', sans-serif;
+    color:var(--ink);
+    background-color:var(--cork);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 3px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 3px),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22220%22%20height%3D%22260%22%20viewBox%3D%220%200%20220%20260%22%3E%0A%3Cg%20fill%3D%22none%22%20stroke%3D%22rgba%28253%2C246%2C227%2C0.16%29%22%20stroke-width%3D%227%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%20%20%3Ccircle%20cx%3D%22150%22%20cy%3D%2238%22%20r%3D%2211%22%20fill%3D%22rgba%28253%2C246%2C227%2C0.16%29%22%20stroke%3D%22none%22/%3E%0A%20%20%3Cline%20x1%3D%22150%22%20y1%3D%2252%22%20x2%3D%22150%22%20y2%3D%2292%22/%3E%0A%20%20%3Cline%20x1%3D%22150%22%20y1%3D%2260%22%20x2%3D%22108%22%20y2%3D%22102%22/%3E%0A%20%20%3Cline%20x1%3D%22150%22%20y1%3D%2265%22%20x2%3D%22172%22%20y2%3D%2284%22/%3E%0A%20%20%3Cline%20x1%3D%22150%22%20y1%3D%2292%22%20x2%3D%22133%22%20y2%3D%22140%22/%3E%0A%20%20%3Cline%20x1%3D%22150%22%20y1%3D%2292%22%20x2%3D%22167%22%20y2%3D%22140%22/%3E%0A%20%20%3Ccircle%20cx%3D%2258%22%20cy%3D%22150%22%20r%3D%2211%22%20fill%3D%22rgba%28253%2C246%2C227%2C0.16%29%22%20stroke%3D%22none%22/%3E%0A%20%20%3Cline%20x1%3D%2258%22%20y1%3D%22164%22%20x2%3D%2258%22%20y2%3D%22198%22/%3E%0A%20%20%3Cline%20x1%3D%2258%22%20y1%3D%22170%22%20x2%3D%22102%22%20y2%3D%22108%22/%3E%0A%20%20%3Cline%20x1%3D%2258%22%20y1%3D%22178%22%20x2%3D%2234%22%20y2%3D%22196%22/%3E%0A%20%20%3Cline%20x1%3D%2258%22%20y1%3D%22198%22%20x2%3D%2240%22%20y2%3D%22232%22/%3E%0A%20%20%3Cline%20x1%3D%2258%22%20y1%3D%22198%22%20x2%3D%2274%22%20y2%3D%22226%22/%3E%0A%20%20%3Ccircle%20cx%3D%22105%22%20cy%3D%22105%22%20r%3D%225%22%20fill%3D%22rgba%28253%2C246%2C227%2C0.22%29%22%20stroke%3D%22none%22/%3E%0A%3C/g%3E%0A%3C/svg%3E");
+    background-repeat: repeat, repeat, repeat;
+    background-size: auto, auto, 220px 260px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  :focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+
+  header{
+    background:var(--frame); padding:22px 6vw;
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:10px solid var(--twine); box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    position:sticky; top:0; z-index:50;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{ width:34px; height:34px; border-radius:50%; background:var(--pin);
+    box-shadow:inset 0 3px 4px rgba(255,255,255,0.35), 0 3px 5px rgba(0,0,0,0.4); }
+  .brand h1{ font-family:'Caveat', cursive; color:var(--paper-cream); font-size:2rem; margin:0; line-height:1; }
+  .brand span{ display:block; font-family:'Space Mono', monospace; font-size:0.62rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:#c9b79a; margin-top:2px; }
+  nav a{ color:#e9dcc4; text-decoration:none; font-size:0.92rem; margin-left:26px; font-weight:500;
+    border-bottom:2px solid transparent; padding-bottom:3px; transition:border-color .2s ease, color .2s ease; }
+  nav a:hover, nav a:focus-visible{border-color:var(--pin); color:#fff;}
+
+  .hero{ padding:70px 6vw 40px; display:flex; flex-wrap:wrap; gap:48px; align-items:center; justify-content:center; }
+  .pinned-headline{
+    position:relative; background:var(--paper-cream); padding:40px 46px 46px; max-width:520px;
+    transform:rotate(-2deg); box-shadow:0 14px 30px rgba(0,0,0,0.35);
+    animation:pinDrop .6s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .pinned-headline::before{
+    content:""; position:absolute; left:50%; top:-16px; width:22px; height:22px; border-radius:50%;
+    background:var(--pin); transform:translateX(-50%);
+    box-shadow:inset 0 3px 4px rgba(255,255,255,0.4), 0 4px 6px rgba(0,0,0,0.45);
+  }
+  .pinned-headline h2{ font-family:'Caveat', cursive; font-weight:700; font-size:3.1rem; line-height:1.05; margin:0 0 18px; }
+  .pinned-headline p{ font-size:1.05rem; line-height:1.5; color:#3a2e20; margin:0 0 26px; }
+  .cta-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{ font-family:'Work Sans', sans-serif; font-weight:600; font-size:0.95rem; padding:12px 20px;
+    border-radius:3px; border:none; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-ask{background:var(--pin); color:#fff; box-shadow:0 4px 0 #8e2a1f;}
+  .btn-offer{background:var(--pin-blue); color:#fff; box-shadow:0 4px 0 #1c3e58;}
+  .btn:active{transform:translateY(1px); box-shadow:none;}
+
+  .hero-side{ max-width:340px; background:rgba(253,246,227,0.14); border:1px dashed rgba(253,246,227,0.5);
+    padding:22px 24px; border-radius:4px; font-size:0.95rem; line-height:1.55; }
+  .hero-side strong{ display:block; font-family:'Space Mono',monospace; font-size:0.72rem; text-transform:uppercase;
+    letter-spacing:0.1em; color:#f1e6cf; margin-bottom:8px; }
+  .hero-side p{margin:0; color:#f1e6cf;}
+
+  @keyframes pinDrop{ 0%{opacity:0; transform:rotate(-2deg) translateY(-40px);} 100%{opacity:1; transform:rotate(-2deg) translateY(0);} }
+
+  .privacy-note{
+    max-width:1100px; margin:0 auto 30px; padding:14px 20px;
+    background:rgba(253,246,227,0.16); border:1px dashed rgba(253,246,227,0.5); border-radius:4px;
+    color:#f1e6cf; font-size:0.85rem; line-height:1.5;
+  }
+  .privacy-note strong{color:#fff;}
+
+  .forms{ display:grid; grid-template-columns:1fr 1fr; gap:34px; padding:10px 6vw 20px; max-width:1100px; margin:0 auto; }
+  @media (max-width:800px){ .forms{grid-template-columns:1fr;} }
+
+  .note-card{ position:relative; padding:30px 28px 26px; border-radius:2px; box-shadow:0 10px 22px rgba(0,0,0,0.28); }
+  .note-card::before{ content:""; position:absolute; left:50%; top:-14px; width:20px; height:20px; border-radius:50%;
+    transform:translateX(-50%); box-shadow:inset 0 3px 4px rgba(255,255,255,0.4), 0 4px 6px rgba(0,0,0,0.4); }
+  #ask-card{background:var(--paper-blush); transform:rotate(1.2deg);}
+  #ask-card::before{background:var(--pin);}
+  #offer-card{background:var(--paper-sky); transform:rotate(-1.1deg);}
+  #offer-card::before{background:var(--pin-blue);}
+
+  .note-card h3{ font-family:'Caveat', cursive; font-size:2rem; margin:4px 0 4px; }
+  .note-card p.tagline{margin:0 0 18px; font-size:0.92rem; color:var(--muted);}
+  .hint{ font-size:0.76rem; color:var(--muted); margin-top:4px; font-style:italic; }
+
+  label{ display:block; font-family:'Space Mono', monospace; font-size:0.68rem; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--muted); margin:14px 0 5px; }
+  input, select, textarea{ width:100%; font-family:'Work Sans', sans-serif; font-size:0.95rem; padding:10px 11px;
+    border:1px solid rgba(0,0,0,0.18); border-radius:3px; background:rgba(255,255,255,0.65); color:var(--ink); }
+  textarea{resize:vertical; min-height:70px;}
+  input:focus, select:focus, textarea:focus{ outline:2px solid var(--pin-blue); outline-offset:1px; background:#fff; }
+  .submit-row{margin-top:20px;}
+  .form-msg{ font-family:'Space Mono', monospace; font-size:0.75rem; margin-top:10px; min-height:1em; color:#2c5a2c; }
+
+  .board-section{padding:10px 6vw 90px;}
+  .board-heading{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:16px;
+    max-width:1100px; margin:0 auto 8px; }
+  .board-heading h2{ font-family:'Caveat', cursive; color:var(--paper-cream); font-size:2.4rem; margin:0; }
+
+  .stats-row{
+    max-width:1100px; margin:0 auto 20px; display:flex; gap:26px; flex-wrap:wrap;
+    font-family:'Space Mono', monospace; color:#f1e6cf; font-size:0.8rem;
+  }
+  .stats-row strong{ color:#fff; font-size:1rem; }
+
+  .filters-row{ max-width:1100px; margin:0 auto 22px; display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:14px; }
+  .filters{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{ font-family:'Space Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;
+    padding:7px 13px; border-radius:20px; border:1px solid rgba(253,246,227,0.5); background:transparent;
+    color:#f1e6cf; cursor:pointer; transition:background .15s ease, color .15s ease; }
+  .chip.active, .chip:hover{background:var(--paper-cream); color:var(--ink); border-color:var(--paper-cream);}
+
+  .toggle-resolved{ display:flex; align-items:center; gap:8px; color:#f1e6cf; font-size:0.82rem;
+    font-family:'Space Mono', monospace; }
+
+  .feed{ max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:26px 22px; }
+  .feed-note{ position:relative; padding:22px 20px 18px; border-radius:2px; box-shadow:0 8px 18px rgba(0,0,0,0.3);
+    animation:pinDrop .45s cubic-bezier(.2,1.4,.4,1) both; transition:transform .18s ease, box-shadow .18s ease; }
+  .feed-note:hover{transform:translateY(-4px) rotate(0deg) !important; box-shadow:0 14px 24px rgba(0,0,0,0.4);}
+  .feed-note::before{ content:""; position:absolute; left:50%; top:-13px; width:18px; height:18px; border-radius:50%;
+    transform:translateX(-50%); box-shadow:inset 0 3px 4px rgba(255,255,255,0.4), 0 3px 5px rgba(0,0,0,0.4); }
+  .feed-note.request{background:var(--paper-blush);}
+  .feed-note.request::before{background:var(--pin);}
+  .feed-note.offer{background:var(--paper-sage);}
+  .feed-note.offer::before{background:var(--pin-blue);}
+  .feed-note.resolved{ background:var(--paper-grey) !important; opacity:0.75; }
+  .feed-note.resolved::before{background:#8a8a80 !important;}
+
+  .feed-note .kind{ font-family:'Space Mono', monospace; font-size:0.62rem; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--muted); margin-bottom:6px; display:flex; justify-content:space-between; gap:8px; }
+  .resolved-tag{ color:#3a6b3a; font-weight:bold; }
+  .feed-note h4{ font-family:'Caveat', cursive; font-size:1.6rem; margin:0 0 6px; line-height:1.1; }
+  .feed-note .cat{ display:inline-block; font-size:0.68rem; font-family:'Space Mono', monospace;
+    background:rgba(0,0,0,0.08); padding:2px 8px; border-radius:10px; margin-bottom:8px; }
+  .feed-note p{margin:0 0 10px; font-size:0.9rem; line-height:1.45; color:#3a2e20;}
+  .feed-note .meta{ font-family:'Space Mono', monospace; font-size:0.68rem; color:var(--muted);
+    display:flex; justify-content:space-between; border-top:1px dashed rgba(0,0,0,0.15); padding-top:8px; }
+
+  .note-actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .mini-btn{ font-family:'Space Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;
+    padding:6px 10px; border-radius:3px; border:1px solid rgba(0,0,0,0.2); background:rgba(255,255,255,0.5);
+    cursor:pointer; color:var(--ink); }
+  .mini-btn:hover{background:#fff;}
+  .mini-btn.done{background:#3a6b3a; color:#fff; border-color:#3a6b3a;}
+  .mini-btn.flag{color:#8a2c22;}
+
+  .reply-box{ margin-top:12px; border-top:1px dashed rgba(0,0,0,0.15); padding-top:10px; }
+  .reply-box textarea{ min-height:50px; font-size:0.85rem; }
+  .reply-list{ margin-top:8px; display:flex; flex-direction:column; gap:6px; }
+  .reply-item{ background:rgba(255,255,255,0.55); border-radius:3px; padding:6px 9px; font-size:0.8rem; }
+  .reply-item .r-meta{ font-family:'Space Mono', monospace; font-size:0.62rem; color:var(--muted); margin-top:2px; }
+  .reply-submit{ margin-top:8px; }
+
+  .empty-note{ grid-column:1/-1; text-align:center; color:#f1e6cf; font-family:'Space Mono', monospace;
+    font-size:0.85rem; padding:30px 0; }
+  .sync-note{ grid-column:1/-1; text-align:center; color:#c9b79a; font-family:'Space Mono', monospace;
+    font-size:0.78rem; padding:6px 0 18px; }
+
+  footer{ background:var(--frame); color:#c9b79a; text-align:center; padding:26px 6vw; font-size:0.82rem;
+    font-family:'Space Mono', monospace; border-top:10px solid var(--twine); }
+  footer strong{ color:#f1e6cf; }
+</style>
+</head>
+<body>
+
+<div style="text-align:center; padding:5px 0; background:var(--twine); color:#f1e6cf; font-family:'Space Mono', monospace; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase;">Developed by Kelvin</div>
+<header>
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true"></div>
+    <div>
+      <h1>THE NEIGHBORHOOD BOARD</h1>
+      <span>a corkboard for everyday help</span>
+    </div>
+  </div>
+  <nav>
+    <a href="#post">Post a note</a>
+    <a href="#board">See the board</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="pinned-headline">
+    <h2>Need a hand?<br>Lend a hand.</h2>
+    <p>Post what you need, or what you can give — a ride, a spare hour, a ladder, a listening ear. Neighbors nearby will see your note and reach out.</p>
+    <div class="cta-row">
+      <button class="btn btn-ask" onclick="document.getElementById('ask-title').focus()">Ask for help</button>
+      <button class="btn btn-offer" onclick="document.getElementById('offer-title').focus()">Offer to help</button>
+    </div>
+  </div>
+  <div class="hero-side">
+    <strong>Why a board, not an app</strong>
+    <p>No accounts, no algorithm deciding who you meet. Just short, honest notes — pinned in the open, for anyone in the neighborhood to read and answer.</p>
+  </div>
+</section>
+
+<div class="privacy-note">
+  <strong>Before you post:</strong> this board is shared — anything you pin or reply with is visible to everyone who opens this page. Skip phone numbers, exact addresses, or other private details in your note; swap those once you've connected with someone you trust.
+</div>
+
+<section class="forms" id="post">
+  <div class="note-card" id="ask-card">
+    <h3>I need help</h3>
+    <p class="tagline">Say what you need — someone nearby may already have it to give.</p>
+    <form id="ask-form">
+      <label for="ask-title">What do you need? (short)</label>
+      <input id="ask-title" required maxlength="60" placeholder="e.g. Ride to a dialysis appointment">
+
+      <label for="ask-category">Category</label>
+      <select id="ask-category" required>
+        <option value="">Choose one</option>
+        <option>Rides</option>
+        <option>Groceries & errands</option>
+        <option>Repairs & tools</option>
+        <option>Tutoring & skills</option>
+        <option>Company & check-ins</option>
+        <option>Childcare & pets</option>
+        <option>Other</option>
+      </select>
+
+      <label for="ask-desc">A bit more detail</label>
+      <textarea id="ask-desc" required maxlength="220" placeholder="When you need it, and anything helpful to know."></textarea>
+      <div class="hint">Tip: no phone numbers or addresses here — arrange those after you connect.</div>
+
+      <label for="ask-name">Your name or initials</label>
+      <input id="ask-name" required maxlength="30" placeholder="e.g. Wanjiru, Block C">
+
+      <label for="ask-area">Your neighborhood or area</label>
+      <input id="ask-area" required maxlength="40" placeholder="e.g. Thika, Section 9">
+
+      <div class="submit-row">
+        <button type="submit" class="btn btn-ask">Pin my request</button>
+      </div>
+      <div class="form-msg" id="ask-msg" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <div class="note-card" id="offer-card">
+    <h3>I can help</h3>
+    <p class="tagline">Offer a skill, a spare hour, or something you own that others could use.</p>
+    <form id="offer-form">
+      <label for="offer-title">What can you offer? (short)</label>
+      <input id="offer-title" required maxlength="60" placeholder="e.g. Free tutoring in maths, evenings">
+
+      <label for="offer-category">Category</label>
+      <select id="offer-category" required>
+        <option value="">Choose one</option>
+        <option>Rides</option>
+        <option>Groceries & errands</option>
+        <option>Repairs & tools</option>
+        <option>Tutoring & skills</option>
+        <option>Company & check-ins</option>
+        <option>Childcare & pets</option>
+        <option>Other</option>
+      </select>
+
+      <label for="offer-desc">A bit more detail</label>
+      <textarea id="offer-desc" required maxlength="220" placeholder="When you're available, and anything helpful to know."></textarea>
+      <div class="hint">Tip: no phone numbers or addresses here — arrange those after you connect.</div>
+
+      <label for="offer-name">Your name or initials</label>
+      <input id="offer-name" required maxlength="30" placeholder="e.g. Otieno, Block C">
+
+      <label for="offer-area">Your neighborhood or area</label>
+      <input id="offer-area" required maxlength="40" placeholder="e.g. Thika, Section 9">
+
+      <div class="submit-row">
+        <button type="submit" class="btn btn-offer">Pin my offer</button>
+      </div>
+      <div class="form-msg" id="offer-msg" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+
+<section class="board-section" id="board">
+  <div class="board-heading">
+    <h2>The board</h2>
+  </div>
+  <div class="stats-row" id="stats-row"></div>
+  <div class="filters-row">
+    <div class="filters" id="filters">
+      <button class="chip active" data-filter="all">All notes</button>
+      <button class="chip" data-filter="request">Requests only</button>
+      <button class="chip" data-filter="offer">Offers only</button>
+      <button class="chip" data-filter="cat:Rides">Rides</button>
+      <button class="chip" data-filter="cat:Groceries & errands">Groceries</button>
+      <button class="chip" data-filter="cat:Repairs & tools">Repairs</button>
+      <button class="chip" data-filter="cat:Tutoring & skills">Tutoring</button>
+      <button class="chip" data-filter="cat:Company & check-ins">Company</button>
+      <button class="chip" data-filter="cat:Childcare & pets">Childcare</button>
+    </div>
+    <label class="toggle-resolved">
+      <input type="checkbox" id="show-resolved"> Show resolved notes
+    </label>
+  </div>
+  <div class="feed" id="feed"><div class="sync-note">Loading the board…</div></div>
+</section>
+
+<footer>
+  <strong>THE NEIGHBORHOOD BOARD</strong> — notes are saved to this board and shared with everyone who opens this page. Report anything that seems unsafe or spammy; notes hidden after multiple reports are removed from view automatically.
+</footer>
+
+<script>
+  const STORAGE_KEY = 'board-notes';
+  let notes = [];
+  let currentFilter = 'all';
+  let showResolved = false;
+
+  const seedNotes = [
+    {id:1, type:'request', category:'Rides', title:'Ride to a dialysis appointment', desc:'Tuesdays and Fridays, 7am. My usual driver moved away — happy to cover fuel.', name:'Wanjiru', area:'Thika, Section 9', ts:Date.now()-1000*60*60*5, resolved:false, flags:0, replies:[]},
+    {id:2, type:'offer', category:'Tutoring & skills', title:'Free maths tutoring, evenings', desc:'Retired teacher, happy to help any secondary school student on the block for an hour after 6pm.', name:'Mzee Otieno', area:'Thika, Landless', ts:Date.now()-1000*60*60*20, resolved:false, flags:0, replies:[]},
+    {id:3, type:'request', category:'Repairs & tools', title:'Borrow a ladder for an afternoon', desc:'Need to clear my gutters before the rains. Will return it clean by evening.', name:'Achieng', area:'Thika, Makongeni', ts:Date.now()-1000*60*60*30, resolved:false, flags:0, replies:[]},
+    {id:4, type:'offer', category:'Company & check-ins', title:'Weekly check-in calls for elderly neighbors', desc:'I can call or visit once a week just to chat and make sure someone is doing alright.', name:'Faith', area:'Thika, Section 9', ts:Date.now()-1000*60*60*48, resolved:false, flags:0, replies:[]},
+    {id:5, type:'request', category:'Childcare & pets', title:'Someone to walk my dog, weekday mornings', desc:'Small, friendly dog. 20 minutes around 6:30am while I get ready for work.', name:'Kevin', area:'Thika, Kiganjo', ts:Date.now()-1000*60*60*70, resolved:true, flags:0, replies:[{name:'Achieng', text:'Happy to help, I pass that way every morning!', ts:Date.now()-1000*60*60*40}]},
+  ];
+  let nextId = 6;
+
+  const hasStorage = () => typeof window !== 'undefined' && window.storage;
+
+  async function loadNotes(){
+    if(!hasStorage()){
+      notes = seedNotes.slice();
+      renderAll();
+      return;
+    }
+    try{
+      const result = await window.storage.get(STORAGE_KEY, true);
+      if(result && result.value){
+        notes = JSON.parse(result.value);
+        nextId = notes.reduce((m,n)=>Math.max(m, n.id), 0) + 1;
+      } else {
+        notes = seedNotes.slice();
+        await saveNotes();
+      }
+    } catch(err){
+      console.error('Could not load board notes, starting fresh:', err);
+      notes = seedNotes.slice();
+    }
+    renderAll();
+  }
+
+  async function saveNotes(){
+    if(!hasStorage()) return;
+    try{
+      await window.storage.set(STORAGE_KEY, JSON.stringify(notes), true);
+    } catch(err){
+      console.error('Could not save to the board:', err);
+    }
+  }
+
+  const timeAgo = ts => {
+    const mins = Math.floor((Date.now()-ts)/60000);
+    if(mins < 60) return mins <= 1 ? 'just now' : mins+'m ago';
+    const hrs = Math.floor(mins/60);
+    if(hrs < 24) return hrs+'h ago';
+    return Math.floor(hrs/24)+'d ago';
+  };
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function renderStats(){
+    const total = notes.filter(n=>n.flags < 3).length;
+    const resolvedCount = notes.filter(n=>n.resolved && n.flags < 3).length;
+    const openRequests = notes.filter(n=>n.type==='request' && !n.resolved && n.flags < 3).length;
+    document.getElementById('stats-row').innerHTML =
+      '<span><strong>'+total+'</strong> notes pinned</span>' +
+      '<span><strong>'+openRequests+'</strong> open requests</span> ' +
+      '<span><strong>'+resolvedCount+'</strong> resolved</span>';
+  }
+
+  function renderFeed(){
+    const feed = document.getElementById('feed');
+    let list = notes.filter(n => n.flags < 3);
+    if(!showResolved) list = list.filter(n => !n.resolved);
+    if(currentFilter === 'request') list = list.filter(n=>n.type==='request');
+    else if(currentFilter === 'offer') list = list.filter(n=>n.type==='offer');
+    else if(currentFilter.startsWith('cat:')) {
+      const cat = currentFilter.slice(4);
+      list = list.filter(n=>n.category===cat);
+    }
+    list = list.slice().sort((a,b)=>b.ts-a.ts);
+
+    feed.innerHTML = '';
+    if(list.length === 0){
+      feed.innerHTML = '<div class="empty-note">No notes here yet — be the first to pin one above.</div>';
+      return;
+    }
+    list.forEach((n, i) => {
+      const rot = (i % 5 - 2) * 0.8;
+      const card = document.createElement('div');
+      card.className = 'feed-note ' + n.type + (n.resolved ? ' resolved' : '');
+      card.style.transform = 'rotate(' + rot + 'deg)';
+
+      const repliesHtml = (n.replies || []).map(r =>
+        '<div class="reply-item">' + escapeHtml(r.text) +
+        '<div class="r-meta">— ' + escapeHtml(r.name) + ' · ' + timeAgo(r.ts) + '</div></div>'
+      ).join('');
+
+      card.innerHTML =
+        '<div class="kind"><span>' + (n.type === 'request' ? 'Needs help' : 'Offering help') + '</span>' +
+        (n.resolved ? '<span class="resolved-tag">✓ ' + (n.type==='request' ? 'Helped' : 'Taken') + '</span>' : '') +
+        '</div>' +
+        '<h4>' + escapeHtml(n.title) + '</h4>' +
+        '<span class="cat">' + escapeHtml(n.category) + '</span>' +
+        '<p>' + escapeHtml(n.desc) + '</p>' +
+        '<div class="meta"><span>' + escapeHtml(n.name) + ' · ' + escapeHtml(n.area) + '</span><span>' + timeAgo(n.ts) + '</span></div>' +
+        '<div class="note-actions">' +
+          (!n.resolved ? '<button class="mini-btn done" data-action="resolve" data-id="'+n.id+'">Mark as ' + (n.type==='request'?'helped':'taken') + '</button>' : '') +
+          '<button class="mini-btn" data-action="reply" data-id="'+n.id+'">Respond</button>' +
+          '<button class="mini-btn flag" data-action="flag" data-id="'+n.id+'">Report</button>' +
+        '</div>' +
+        '<div class="reply-box" id="reply-box-'+n.id+'" hidden>' +
+          '<div class="reply-list">' + repliesHtml + '</div>' +
+          '<form data-id="'+n.id+'" class="reply-form">' +
+            '<label for="reply-name-'+n.id+'">Your name</label>' +
+            '<input id="reply-name-'+n.id+'" required maxlength="30">' +
+            '<label for="reply-text-'+n.id+'">Your reply</label>' +
+            '<textarea id="reply-text-'+n.id+'" required maxlength="200" placeholder="How you can help, or a question."></textarea>' +
+            '<div class="submit-row reply-submit"><button type="submit" class="mini-btn">Post reply</button></div>' +
+          '</form>' +
+        '</div>';
+      feed.appendChild(card);
+    });
+  }
+
+  function renderAll(){
+    renderStats();
+    renderFeed();
+  }
+
+  document.getElementById('filters').addEventListener('click', e => {
+    const btn = e.target.closest('.chip');
+    if(!btn) return;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderFeed();
+  });
+
+  document.getElementById('show-resolved').addEventListener('change', e => {
+    showResolved = e.target.checked;
+    renderFeed();
+  });
+
+  document.getElementById('feed').addEventListener('click', async e => {
+    const btn = e.target.closest('.mini-btn');
+    if(!btn) return;
+    const id = parseInt(btn.dataset.id, 10);
+    const note = notes.find(n => n.id === id);
+    if(!note) return;
+
+    if(btn.dataset.action === 'resolve'){
+      note.resolved = true;
+      await saveNotes();
+      renderAll();
+    } else if(btn.dataset.action === 'flag'){
+      note.flags = (note.flags || 0) + 1;
+      await saveNotes();
+      renderAll();
+    } else if(btn.dataset.action === 'reply'){
+      const box = document.getElementById('reply-box-' + id);
+      if(box) box.hidden = !box.hidden;
+    }
+  });
+
+  document.getElementById('feed').addEventListener('submit', async e => {
+    const form = e.target.closest('.reply-form');
+    if(!form) return;
+    e.preventDefault();
+    const id = parseInt(form.dataset.id, 10);
+    const note = notes.find(n => n.id === id);
+    if(!note) return;
+    const name = document.getElementById('reply-name-' + id).value.trim();
+    const text = document.getElementById('reply-text-' + id).value.trim();
+    if(!name || !text) return;
+    note.replies = note.replies || [];
+    note.replies.push({name, text, ts:Date.now()});
+    await saveNotes();
+    renderFeed();
+  });
+
+  function wireForm(prefix, type){
+    const form = document.getElementById(prefix + '-form');
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const title = document.getElementById(prefix + '-title').value.trim();
+      const category = document.getElementById(prefix + '-category').value;
+      const desc = document.getElementById(prefix + '-desc').value.trim();
+      const name = document.getElementById(prefix + '-name').value.trim();
+      const area = document.getElementById(prefix + '-area').value.trim();
+      if(!title || !category || !desc || !name || !area) return;
+
+      notes.unshift({id:nextId++, type, category, title, desc, name, area, ts:Date.now(), resolved:false, flags:0, replies:[]});
+      await saveNotes();
+      form.reset();
+      const msg = document.getElementById(prefix + '-msg');
+      msg.textContent = 'Pinned to the board below.';
+      setTimeout(() => { msg.textContent = ''; }, 3500);
+
+      currentFilter = 'all';
+      showResolved = false;
+      document.getElementById('show-resolved').checked = false;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      document.querySelector('.chip[data-filter="all"]').classList.add('active');
+      renderAll();
+      document.getElementById('board').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
+
+  wireForm('ask', 'request');
+  wireForm('offer', 'offer');
+  loadNotes();
+</script>
+
+</body>
+</html>
